@@ -2,6 +2,63 @@ import React, { Component } from 'react';
 //import logo from './logo.svg';
 import './App.css';
 
+
+var Stopwatch = React.createClass({
+  getInitialState: function(){
+    return{
+      running:false,
+      prev:0,
+      elapse:0
+    };
+  },
+
+  onStop: function(){
+      this.setState({running:false})
+  },
+  onStart: function(){
+      this.setState({
+        running:true,
+        prev:Date.now(),
+      });
+
+  },
+  onReset: function(){
+      this.setState({
+        elapse:0,
+        prev:Date.now(),
+      });
+  },
+
+  componentDidMount(){
+    setInterval(this.ontick, 100);
+  },
+
+  componentWillUnmount(){
+    clearInterval(this.interval);
+  },
+
+  ontick:function(){
+    if(this.state.running){
+        var now = Date.now();
+        this.setState({
+        prev:now,
+        elapse: this.state.elapse+(now - this.state.prev),
+      });
+      console.log('ontick')
+    } 
+  },
+render : function(){
+  var seconds=Math.floor(this.state.elapse/1000)
+  return(
+    <div className="stopwatch">
+      <h2> Stop watch</h2><br/>
+      <div className="stopwatch-score">{seconds}</div>
+      {this.state.running ? <button onClick={this.onStop}>Stop</button> : <button onClick={this.onStart}>Start</button>}
+      <button onClick={this.onReset}>Reset</button>
+    </div>
+    );
+}
+});
 var Addplayer= React.createClass({
  
   getInitialState:function(){
@@ -59,7 +116,7 @@ function Header(props){
             <div className="header">
             <Stats parray1={props.parray}/>
               <h1>{props.title}</h1>
-
+              <Stopwatch/>
             </div>
           );
  }
